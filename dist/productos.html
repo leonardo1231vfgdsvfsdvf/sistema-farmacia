@@ -1,0 +1,550 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <title>Productos - Farmacia Sistema</title>
+
+    <!-- Bootstrap Icons & Overlayscrollbars -->
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/overlayscrollbars@2.11.0/styles/overlayscrollbars.min.css"
+    />
+
+    <!-- AdminLTE -->
+    <link rel="stylesheet" href="css/adminlte.css"/>
+
+    <!-- DataTables + Buttons + Responsive -->
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css"/>
+    <link rel="stylesheet" href="https://cdn.datatables.net/buttons/2.4.1/css/buttons.dataTables.min.css"/>
+    <link rel="stylesheet" href="https://cdn.datatables.net/responsive/2.5.0/css/responsive.dataTables.min.css"/>
+<!-- Favicon (Almacén / Productos) -->
+<link rel="icon" type="image/svg+xml" href="favicons/productos.svg?v=1">
+<meta name="theme-color" content="#0d6efd">
+
+    <style>
+      /* ─── CABECERA AZUL FLEXIBLE ─── */
+      .card-header {
+        display: flex !important;
+        align-items: center;
+        justify-content: space-between;
+        padding: 1rem 2rem;
+        min-height: 80px;
+      }
+      .card-header .card-title {
+        margin: 0;
+        font-size: 1.25rem;
+        font-weight: 500;
+      }
+      /* botón Nuevo Producto */
+      #btn-add-producto {
+        margin-left: auto;
+        margin-right: 2rem;
+      }
+      /* centrar botones DataTables */
+      #tabla-productos_wrapper .dt-buttons {
+        float: none !important;
+        margin: 0 auto 1rem !important;
+        display: flex !important;
+        gap: .5rem !important;
+      }
+      /* buscador a la derecha */
+      #table-filter {
+        margin-left: auto;
+        margin-right: 2rem;
+      }
+      #table-filter .form-control { vertical-align: middle; }
+      /* Toasts */
+      #alert-container .toast {
+        position: relative;
+        margin-bottom: .5rem;
+      }
+      /* forzar nowrap y centrar contenido */
+      #tabla-productos th,
+      #tabla-productos td {
+        white-space: nowrap;
+        vertical-align: middle;
+        text-align: center;
+      }
+      /* preview imagen */
+      #preview-img img {
+        max-width: 120px;
+        max-height: 120px;
+        border-radius: 8px;
+        box-shadow: 0 0 4px #aaa;
+      }
+    </style>
+  </head>
+  <body class="layout-fixed sidebar-expand-lg sidebar-open bg-body-tertiary">
+    <div class="app-wrapper">
+
+      <!-- HEADER -->
+      <nav class="app-header navbar navbar-expand bg-body">
+        <div class="container-fluid">
+          <ul class="navbar-nav">
+            <li class="nav-item">
+              <a class="nav-link" data-lte-toggle="sidebar" href="#">
+                <i class="bi bi-list"></i>
+              </a>
+            </li>
+          </ul>
+          <ul class="navbar-nav ms-auto">
+            <li class="nav-item dropdown user-menu">
+              <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">
+                <img
+                  src="/assets/img/alexanderpierce.jpg"
+                  class="user-image img-circle elevation-2"
+                  width="30" height="30"
+                />
+                <span id="navbar-username" class="d-none d-md-inline">Usuario</span>
+              </a>
+              <ul class="dropdown-menu dropdown-menu-end" style="min-width:220px;">
+                <li class="user-header bg-primary text-center">
+                  <img
+                    src="/assets/img/alexanderpierce.jpg"
+                    class="img-circle elevation-2 mb-2"
+                    width="80" height="80"
+                  />
+                  <p>
+                    <strong id="user-fullname">Nombre Completo</strong><br/>
+                    <small id="user-email">email@ejemplo.com</small><br/>
+                    <small id="user-address">Dirección</small>
+                  </p>
+                </li>
+                <li class="user-footer d-flex justify-content-between px-2">
+                  <a href="perfil.html" class="btn btn-default btn-flat">Perfil</a>
+                  <a href="login.html" id="btn-logout" class="btn btn-default btn-flat">
+                    Cerrar Sesión
+                  </a>
+                </li>
+              </ul>
+            </li>
+          </ul>
+        </div>
+      </nav>
+
+      <!-- SIDEBAR -->
+      <aside class="app-sidebar bg-body-secondary shadow" data-bs-theme="dark">
+        <div class="sidebar-brand">
+          <a href="index.html" class="brand-link">
+            <img
+              src="assets/img/logofarmacia.png"
+              class="brand-image opacity-75 shadow"
+              style="width:36px"
+            />
+            <span class="brand-text fw-light">FARMACIA SISTEMA</span>
+          </a>
+        </div>
+        <div class="sidebar-wrapper">
+          <nav class="mt-2">
+            <ul class="nav sidebar-menu flex-column">
+              <li id="menu-usuarios" class="nav-item">
+                <a href="usuarios.html" class="nav-link">
+                  <i class="nav-icon bi bi-table"></i><p>USUARIOS</p>
+                </a>
+              </li>
+              <li id="menu-clientes" class="nav-item">
+                <a href="clientes.html" class="nav-link">
+                  <i class="nav-icon bi bi-people"></i><p>CLIENTES</p>
+                </a>
+              </li>
+              <li id="menu-productos" class="nav-item">
+                <a href="productos.html" class="nav-link active">
+                  <i class="nav-icon bi bi-box-seam"></i><p>PRODUCTOS</p>
+                </a>
+              </li>
+              <li id="menu-ventas" class="nav-item">
+                <a href="ventas.html" class="nav-link">
+                  <i class="nav-icon bi bi-cash-stack"></i><p>VENTAS</p>
+                </a>
+              </li>
+            </ul>
+          </nav>
+        </div>
+      </aside>
+
+      <!-- MAIN -->
+      <main class="app-main">
+        <div class="container-fluid px-4">
+          <div class="card mt-4">
+
+            <!-- CABECERA -->
+            <div class="card-header bg-primary text-white">
+              <h3 class="card-title mb-0">Lista de Productos</h3>
+              <button id="btn-add-producto" class="btn btn-success btn-sm" data-bs-toggle="modal" data-bs-target="#modalProducto">
+                <i class="bi bi-plus-lg"></i> Nuevo Producto
+              </button>
+              <div id="table-filter"></div>
+            </div>
+
+            <!-- ALERTAS -->
+            <div id="alert-container" class="px-3 py-2"></div>
+
+            <!-- TABLA -->
+            <div class="card-body p-0">
+              <div class="table-responsive">
+                <table id="tabla-productos" class="display nowrap" style="width:100%">
+                  <thead>
+                    <tr>
+                      <th>ID</th>
+                      <th>Nombre</th>
+                      <th>Categoría</th>
+                      <th>Cantidad</th>
+                      <th>Precio</th>
+                      <th>Foto</th>
+                      <th>Acciones</th>
+                    </tr>
+                  </thead>
+                  <tbody></tbody>
+                </table>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </main>
+
+      <!-- MODAL PRODUCTO -->
+      <div class="modal fade" id="modalProducto" tabindex="-1" aria-labelledby="modalProductoLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+          <div class="modal-content">
+            <form id="form-producto">
+              <div class="modal-header bg-success text-white">
+                <h5 class="modal-title" id="modalProductoLabel">Agregar / Editar Producto</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+              </div>
+              <div class="modal-body">
+                <input type="hidden" id="producto-id"/>
+                <div class="mb-3">
+                  <label class="form-label">Nombre *</label>
+                  <input type="text" id="producto-nombre" class="form-control" required/>
+                </div>
+                <div class="mb-3">
+                  <label class="form-label">Categoría *</label>
+                  <input type="text" id="producto-categoria" class="form-control" required/>
+                </div>
+                <div class="row g-3 mb-3">
+                  <div class="col">
+                    <label class="form-label">Cantidad *</label>
+                    <input type="number" id="producto-cantidad" class="form-control" required/>
+                  </div>
+                  <div class="col">
+                    <label class="form-label">Precio *</label>
+                    <input type="number" step="0.01" id="producto-precio" class="form-control" required/>
+                  </div>
+                </div>
+                <div class="mb-3">
+                  <label class="form-label">Foto *</label>
+                  <input type="file" id="imageFile" class="form-control" accept="image/*" required/>
+                </div>
+                <div id="preview-img" class="mb-3 text-center"></div>
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                <button type="submit" class="btn btn-primary">Guardar</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+
+      <!-- FOOTER -->
+      <footer class="app-footer">
+        <div class="float-end d-none d-sm-inline">Anything you want</div>
+        <strong>&copy; 2014-2025 <a href="https://adminlte.io">AdminLTE.io</a></strong>
+      </footer>
+
+    </div>
+
+    <!-- SCRIPTS -->
+    <script src="https://cdn.jsdelivr.net/npm/overlayscrollbars@2.11.0/browser/overlayscrollbars.browser.es6.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="js/adminlte.js"></script>
+
+    <script src="https://code.jquery.com/jquery-3.7.0.js"></script>
+    <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/buttons/2.4.1/js/dataTables.buttons.min.js"></script>
+    <script src="https://cdn.datatables.net/buttons/2.4.1/js/buttons.html5.min.js"></script>
+    <script src="https://cdn.datatables.net/buttons/2.4.1/js/buttons.print.min.js"></script>
+    <script src="https://cdn.datatables.net/buttons/2.4.1/js/buttons.colVis.min.js"></script>
+    <script src="https://cdn.datatables.net/responsive/2.5.0/js/dataTables.responsive.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/pdfmake.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/vfs_fonts.js"></script>
+<script>
+(function(){
+  const raw = localStorage.getItem('session');
+  if (!raw) return window.location.href = 'login.html';
+
+  let session;
+  try { session = JSON.parse(raw); } catch {
+    localStorage.removeItem('session');
+    return window.location.href = 'login.html';
+  }
+  if (!session.loggedIn) return window.location.href = 'login.html';
+
+  // Compat: soporta array de objetos (nuevo) y array de strings (viejo)
+const can = (mod) => {
+  const acc = session.user.accesos || [];
+  // si son objetos:
+  if (acc.length && typeof acc[0] === 'object') {
+    return acc.some(a => String(a.modulo || '').toUpperCase() === mod && a.acceso === true);
+  }
+  // si son strings:
+  return acc.map(x => String(x).toUpperCase()).includes(mod);
+};
+
+
+  // 1) Ocultar ítems del menú lateral (asegúrate de usar estos IDs en el HTML)
+  const byId = id => document.getElementById(id);
+  const hide = el => el && (el.style.display = 'none');
+
+  // IDs esperados en tu sidebar:
+  // <li id="menu-usuarios"> ... </li>
+  // <li id="menu-clientes"> ... </li>
+  // <li id="menu-productos"> ... </li>
+  // <li id="menu-ventas"> ... </li>
+  if (!can('USUARIOS'))  hide(byId('menu-usuarios'));
+  if (!can('CLIENTES'))  hide(byId('menu-clientes'));
+  if (!can('PRODUCTOS')) hide(byId('menu-productos'));
+  if (!can('VENTAS'))    hide(byId('menu-ventas'));
+
+  // 2) Bloquear acceso directo por URL:
+  // Mapeo simple página → módulo
+  const pageToModule = {
+    'usuarios.html':  'USUARIOS',
+    'clientes.html':  'CLIENTES',
+    'productos.html': 'PRODUCTOS',
+    'ventas.html':    'VENTAS'
+  };
+  const path = location.pathname.split('/').pop() || 'index.html';
+  const needed = pageToModule[path];
+  if (needed && !can(needed)) {
+    // Redirige a inicio o a una 403
+    return window.location.href = 'index.html';
+  }
+
+  // 3) Exponer sesión para otras scripts
+  window.__SESSION__ = session;
+})();
+</script>
+
+    <script>
+      // Toast genérico
+      function mostrarToast(msg, tipo='success') {
+        const colores = { success:'bg-success text-white', danger:'bg-danger text-white' };
+        const iconos  = { success:'bi-check-circle-fill', danger:'bi-x-circle-fill' };
+        const toast = document.createElement('div');
+        toast.className = `toast align-items-center ${colores[tipo]} border-0 show`;
+        toast.innerHTML = `
+          <div class="d-flex">
+            <div class="toast-body"><i class="bi ${iconos[tipo]} me-2"></i>${msg}</div>
+            <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
+          </div>`;
+        document.getElementById('alert-container').appendChild(toast);
+        setTimeout(()=> toast.remove(),3000);
+      }
+
+      // Redimensiona y convierte imagen
+      async function toBase64Resized(file) {
+        return new Promise((res, rej) => {
+          const img = new Image(), reader = new FileReader();
+          reader.onload = e => {
+            img.src = e.target.result;
+            img.onload = () => {
+              const canvas = document.createElement('canvas');
+              const MAX = 300;
+              let { width, height } = img;
+              if (width > height) {
+                if (width > MAX) { height *= MAX/width; width = MAX; }
+              } else {
+                if (height > MAX) { width *= MAX/height; height = MAX; }
+              }
+              canvas.width = width; canvas.height = height;
+              canvas.getContext('2d').drawImage(img,0,0,width,height);
+              res(canvas.toDataURL('image/jpeg',0.8));
+            };
+          };
+          reader.onerror = rej;
+          reader.readAsDataURL(file);
+        });
+      }
+
+      // Session & Logout
+      ;(() => {
+        const raw = localStorage.getItem('session');
+        if (!raw) return location.href='login.html';
+        let s;
+        try { s = JSON.parse(raw); }
+        catch { localStorage.removeItem('session'); return location.href='login.html'; }
+        if (!s.loggedIn) return location.href='login.html';
+        $('#navbar-username').text(s.user.username);
+        $('.user-image').attr('src', s.user.avatarUrl||'/assets/img/alexanderpierce.jpg');
+        $('#user-fullname').text(s.user.nombreCompleto);
+        $('#user-email').text(s.user.email);
+        $('#user-address').text(s.user.direccion);
+        $('#btn-logout').on('click', e => {
+          e.preventDefault();
+          localStorage.removeItem('session');
+          location.href='login.html';
+        });
+      })();
+
+      // CRUD + DataTable Productos
+      $(function(){
+        // Si ya había DataTable, destruir
+        if ($.fn.DataTable.isDataTable('#tabla-productos')) {
+          $('#tabla-productos').DataTable().clear().destroy();
+        }
+
+        const table = $('#tabla-productos').DataTable({
+          serverSide: true,
+          processing: false,
+          dom: 'Bfrtip',
+          order: [[0,'desc']],
+          pageLength: 10,
+          scrollX: true,
+          responsive: true,
+          buttons: ['copy','csv','excel','pdf','print','colvis'],
+          ajax: {
+            url: '/api/productos',
+            type: 'GET',
+            data: d=>({
+              draw:   d.draw,
+              page:   Math.floor(d.start/d.length)+1,
+              size:   d.length,
+              search: d.search.value,
+              sortBy: d.columns[d.order[0].column].data,
+              order:  d.order[0].dir
+            }),
+            dataSrc: 'data'
+          },
+          columns: [
+            { data:'id' },
+            { data:'nombre' },
+            { data:'categoria' },
+            { data:'cantidad' },
+            { data:'precio', render: v=>Number(v).toFixed(2) },
+            {
+              data:'foto',
+              orderable:false,
+              searchable:false,
+              render: u=> u?`<img src="${u}" width="50" style="object-fit:cover">`:''
+            },
+            {
+              data:null,
+              orderable:false,
+              searchable:false,
+              render:(_,__,r)=>`
+                <button class="btn btn-sm btn-primary btn-edit me-1" data-id="${r.id}">
+                  <i class="bi bi-pencil-fill"></i>
+                </button>
+                <button class="btn btn-sm btn-danger btn-delete" data-id="${r.id}">
+                  <i class="bi bi-trash-fill"></i>
+                </button>`
+            }
+          ],
+          initComplete(){
+            this.buttons().container().appendTo($('.card-header'));
+            $('#tabla-productos_filter')
+              .appendTo('#table-filter')
+              .find('input')
+              .addClass('form-control form-control-sm ms-2')
+              .css('width','180px');
+          },
+          language: {
+            lengthMenu:'Mostrar _MENU_ registros por página',
+            zeroRecords:'No se encontraron resultados',
+            info:'Mostrando de _START_ a _END_ de _TOTAL_ productos',
+            infoEmpty:'Mostrando 0 de 0 registros',
+            infoFiltered:'(filtrado de _MAX_ totales)',
+            search:'Buscar:',
+            paginate:{ first:'Primero', last:'Último', next:'Siguiente', previous:'Anterior' },
+            buttons:{ copy:'Copiar', print:'Imprimir', colvis:'Columnas' }
+          }
+        });
+
+        const modal = new bootstrap.Modal($('#modalProducto'));
+        let imgBase64 = '';
+
+        // Editar / Eliminar delegados
+        $('#tabla-productos')
+          .on('click','.btn-edit',function(){
+            const id = $(this).data('id');
+            $.getJSON(`/api/productos/${id}`)
+              .done(p=>{
+                $('#producto-id').val(p.id);
+                $('#producto-nombre').val(p.nombre);
+                $('#producto-categoria').val(p.categoria);
+                $('#producto-cantidad').val(p.cantidad);
+                $('#producto-precio').val(p.precio);
+                imgBase64 = p.foto||'';
+                $('#preview-img').html(imgBase64?`<img src="${imgBase64}">`:'');
+                $('#imageFile').prop('required',false);
+                modal.show();
+              })
+              .fail(()=>mostrarToast('Error al cargar producto','danger'));
+          })
+          .on('click','.btn-delete',function(){
+            const id = $(this).data('id');
+            if(!confirm('¿Eliminar este producto?'))return;
+            fetch(`/api/productos/${id}`,{ method:'DELETE' })
+              .then(r=> r.ok
+                ? (mostrarToast('Producto eliminado','success'),
+                   table.ajax.reload(null,true))
+                : mostrarToast('Error al eliminar','danger')
+              )
+              .catch(()=>mostrarToast('Error de conexión','danger'));
+          });
+
+        // Cambio de archivo
+        $('#imageFile').on('change',async function(){
+          const file = this.files[0];
+          if(!file){ $('#preview-img').empty(); imgBase64=''; return; }
+          try{ imgBase64 = await toBase64Resized(file); }
+          catch{ mostrarToast('Error procesando imagen','danger'); return; }
+          $('#preview-img').html(`<img src="${imgBase64}">`);
+        });
+
+        // Guardar formulario
+        $('#form-producto').on('submit',function(e){
+          e.preventDefault();
+          const id = $('#producto-id').val();
+          const payload = {
+            nombre:$('#producto-nombre').val().trim(),
+            categoria:$('#producto-categoria').val().trim(),
+            cantidad:Number($('#producto-cantidad').val()),
+            precio:  Number($('#producto-precio').val()),
+            foto: imgBase64
+          };
+          fetch(id?`/api/productos/${id}`:'/api/productos',{
+            method:id?'PUT':'POST',
+            headers:{'Content-Type':'application/json'},
+            body: JSON.stringify(payload)
+          })
+          .then(r=> r.ok
+            ? (mostrarToast(id?'Producto actualizado':'Producto agregado','success'),
+               modal.hide(), table.ajax.reload(null,true))
+            : r.json().then(err=>{ throw err.error||'Error'; })
+          )
+          .catch(msg=> mostrarToast(msg,'danger'));
+        });
+
+        // Botón Nuevo
+        $('#btn-add-producto').on('click',()=>{
+          $('#form-producto')[0].reset();
+          $('#producto-id').val('');
+          imgBase64 = '';
+          $('#preview-img').empty();
+          $('#imageFile').prop('required',true);
+        });
+      });
+    </script>
+    <script src="js/guard-accesos.js"></script>
+
+  </body>
+</html>

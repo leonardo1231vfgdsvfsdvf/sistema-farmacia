@@ -1,0 +1,775 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>Ventas - Farmacia Sistema</title>
+
+  <!-- AdminLTE & Bootstrap Icons -->
+  <link rel="stylesheet" href="css/adminlte.css"/>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css"/>
+<!-- Favicon (Ventas) -->
+<link rel="icon" type="image/svg+xml" href="favicons/ventas.svg?v=1">
+
+<meta name="theme-color" content="#fd7e14">
+
+  <style>
+    .box-cuadro { background:#fff; border-radius:10px; box-shadow:0 1px 4px #0001; padding:20px; margin-bottom:18px; }
+    .h100 { min-height:310px; }
+    .cuadro-titulo { font-weight:bold; font-size:1.05rem; margin-bottom:10px; }
+    .gris { background:#f9fafd; }
+    .producto-img { width:40px; height:40px; object-fit:cover; border-radius:6px; }
+    .scroll-lista { max-height:220px; overflow-y:auto; }
+    .mini-btn { padding:2px 10px; font-size:13px; }
+    .stock-badge { border-radius:8px; font-weight:600; padding:7px 0; min-width:42px; text-align:center; color:#fff; display:inline-block; }
+   .thumb-venta{width:40px;height:40px;object-fit:cover;border-radius:6px}
+    table.dataTable td.text-wrap {
+  white-space: normal !important;
+}
+#detalle-venta-body table {
+  width: 100%;
+  margin-top: 1rem;
+}
+#detalle-venta-body th, 
+#detalle-venta-body td {
+  padding: .5rem;
+}
+
+  </style>
+</head>
+<body class="layout-fixed sidebar-expand-lg bg-body-tertiary">
+  <div class="app-wrapper">
+
+    <!-- HEADER -->
+    <nav class="app-header navbar navbar-expand bg-body">
+      <div class="container-fluid">
+        <a class="nav-link" data-lte-toggle="sidebar" href="#"><i class="bi bi-list"></i></a>
+        <ul class="navbar-nav ms-auto">
+          <li class="nav-item dropdown user-menu">
+            <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">
+              <img src="/assets/img/alexanderpierce.jpg" class="user-image img-circle elevation-2" width="30" height="30"/>
+              <span id="navbar-username" class="d-none d-md-inline">Usuario</span>
+            </a>
+            <ul class="dropdown-menu dropdown-menu-end" style="min-width:220px;">
+              <li class="user-header bg-primary text-center">
+                <img src="/assets/img/alexanderpierce.jpg" class="img-circle elevation-2 mb-2" width="80" height="80"/>
+                <p>
+                  <strong id="user-fullname">Nombre Completo</strong><br/>
+                  <small id="user-email">email@ejemplo.com</small><br/>
+                  <small id="user-address">Dirección</small>
+                </p>
+              </li>
+              <li class="user-footer d-flex justify-content-between px-2">
+                <a href="perfil.html" class="btn btn-default btn-flat">Perfil</a>
+                <a href="login.html" id="btn-logout" class="btn btn-default btn-flat">Cerrar Sesión</a>
+              </li>
+            </ul>
+          </li>
+        </ul>
+      </div>
+    </nav>
+
+    <!-- SIDEBAR -->
+    <aside class="app-sidebar bg-body-secondary shadow" data-bs-theme="dark">
+      <div class="sidebar-brand">
+        <a href="index.html" class="brand-link">
+          <img src="assets/img/logofarmacia.png" class="brand-image opacity-75 shadow" style="width:36px"/>
+          <span class="brand-text fw-light">FARMACIA SISTEMA</span>
+        </a>
+      </div>
+      <div class="sidebar-wrapper">
+        <nav class="mt-2">
+          <ul class="nav sidebar-menu flex-column">
+            <li id="menu-usuarios" class="nav-item"><a href="usuarios.html" class="nav-link"><i class="nav-icon bi bi-table"></i><p>USUARIOS</p></a></li>
+            <li id="menu-clientes" class="nav-item"><a href="clientes.html" class="nav-link"><i class="nav-icon bi bi-people"></i><p>CLIENTES</p></a></li>
+            <li id="menu-productos" class="nav-item"><a href="productos.html" class="nav-link"><i class="nav-icon bi bi-box-seam"></i><p>PRODUCTOS</p></a></li>
+            <li id="menu-ventas" class="nav-item"><a href="ventas.html" class="nav-link active"><i class="nav-icon bi bi-cash-stack"></i><p>VENTAS</p></a></li>
+          </ul>
+        </nav>
+      </div>
+    </aside>
+
+    <!-- MAIN -->
+    <main class="app-main">
+      <div class="container-fluid px-3 pt-2">
+
+        <!-- TABS -->
+        <ul class="nav nav-tabs mb-4" id="ventasTabs" role="tablist">
+          <li class="nav-item" role="presentation">
+            <button class="nav-link active" id="tab-gestion" data-bs-toggle="tab" data-bs-target="#panel-gestion" type="button">Gestión</button>
+          </li>
+          <li class="nav-item" role="presentation">
+            <button class="nav-link" id="tab-listado" data-bs-toggle="tab" data-bs-target="#panel-listado" type="button">Listado</button>
+          </li>
+        </ul>
+
+        <div class="tab-content">
+          <!-- GESTIÓN -->
+          <div class="tab-pane fade show active" id="panel-gestion" role="tabpanel">
+            <div class="row g-3">
+              <!-- CLIENTE -->
+              <div class="col-md-6">
+                <div class="box-cuadro h100">
+                  <div class="cuadro-titulo mb-2"><i class="bi bi-person"></i> Cliente</div>
+                  <div class="d-flex align-items-center gap-2 mb-2">
+                    <button id="btn-add-cliente" class="btn btn-success mini-btn"><i class="bi bi-plus"></i> Agregar</button>
+                    <select id="select-cliente" class="form-select form-select-sm" style="max-width:250px">
+                      <option value="">Seleccione cliente...</option>
+                    </select>
+                  </div>
+                  <div id="info-cliente" class="gris p-2 rounded mb-2" style="font-size:.95em;">
+                    <div><b>DNI:</b> <span id="cli-dni">-</span></div>
+                    <div><b>RUC:</b> <span id="cli-ruc">-</span></div>
+                    <div><b>Nombres:</b> <span id="cli-nombres">-</span></div>
+                    <div><b>Celular:</b> <span id="cli-cel">-</span></div>
+                    <div><b>Dirección:</b> <span id="cli-dir">-</span></div>
+                    <div><b>Correo:</b> <span id="cli-mail">-</span></div>
+                  </div>
+                  <button id="btn-editar-cliente" class="btn btn-outline-primary btn-sm"><i class="bi bi-pencil"></i> Editar Cliente</button>
+                </div>
+
+                <!-- COMPROBANTE & PAGO -->
+                <div class="box-cuadro">
+                  <div class="cuadro-titulo mb-2"><i class="bi bi-receipt"></i> Comprobante y Pago</div>
+                  <div class="mb-2">
+                    <label>Tipo de Comprobante:</label>
+                    <select id="select-comp" class="form-select form-select-sm mt-1" onchange="renderComprobanteFields()">
+                      <option value="">Seleccione</option>
+                      <option value="FACTURA">Factura</option>
+                      <option value="BOLETA">Boleta Electrónica</option>
+                    </select>
+                  </div>
+                  <div id="div-comp-dinamico"></div>
+                  <div class="mb-2">
+                    <label>Método de Pago:</label>
+                    <select id="select-pago" class="form-select form-select-sm mt-1" onchange="handlePagoFields()">
+                      <option value="">Seleccione</option>
+                      <option value="CREDITO">Tarjeta de Crédito</option>
+                      <option value="DEBITO">Tarjeta de Débito</option>
+                      <option value="EFECTIVO">Efectivo</option>
+                    </select>
+                  </div>
+                  <div id="metodo-extra"></div>
+                </div>
+              </div>
+
+              <!-- SELECCIÓN DE PRODUCTOS -->
+              <div class="col-md-6">
+                <div class="box-cuadro h100">
+                  <div class="d-flex justify-content-between mb-2">
+                    <span class="cuadro-titulo"><i class="bi bi-bag"></i> Selección de Productos</span>
+                    <input id="buscar-prod" type="text" class="form-control form-control-sm" placeholder="Buscar..." style="width:180px">
+                  </div>
+                  <div class="scroll-lista">
+                    <table class="table table-sm align-middle mb-0">
+                      <thead><tr>
+                        <th>#</th><th>Foto</th><th>Nombre</th><th>Stock</th><th>Cant.</th><th>Precio</th><th></th>
+                      </tr></thead>
+                      <tbody id="lista-productos"></tbody>
+                    </table>
+                  </div>
+                </div>
+
+                <!-- PRODUCTOS SELECCIONADOS -->
+                <div class="box-cuadro mt-3">
+                  <div class="cuadro-titulo mb-2"><i class="bi bi-list-ol"></i> Productos Seleccionados</div>
+                  <div class="scroll-lista">
+                    <table class="table table-sm align-middle mb-0">
+                      <thead><tr><th>Foto</th><th>Producto</th><th>Cant.</th><th>Precio</th><th>Subtotal</th><th></th></tr></thead>
+                      <tbody id="tabla-final"></tbody>
+                    </table>
+                  </div>
+                  <div class="d-flex justify-content-between mt-3">
+                    <h5 class="mb-0">Venta Total:</h5>
+                    <h5 class="mb-0 text-success">S/ <span id="venta-total">0.00</span></h5>
+                  </div>
+                  <button id="btn-guardar-venta" class="btn btn-primary w-100 mt-2">Guardar</button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- LISTADO -->
+          <div class="tab-pane fade" id="panel-listado" role="tabpanel">
+            <div class="box-cuadro mb-3">
+              <div class="cuadro-titulo mb-2"><i class="bi bi-table"></i> Listado de Ventas</div>
+              <div class="table-responsive">
+                <table class="table table-striped" id="tabla-ventas">
+                 <thead>
+  <tr>
+       <th>ID</th>
+    <th>Cliente</th>
+    <th>Email</th>
+    <th>Dirección</th>
+    <th>Fecha</th>
+    <th>N° Doc</th>
+    <th>Método Pago</th>
+    <th>Ítems</th>
+    <th>Total</th>
+    <th>Acción</th>
+  </tr>
+</thead>
+                  <tbody></tbody>
+                </table>
+              </div>
+            </div>
+            <!-- MODAL DETALLE -->
+            <div class="modal fade" id="modalDetalleVenta" tabindex="-1">
+              <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <h5 class="modal-title">Detalle de Venta</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                  </div>
+                  <div class="modal-body" id="detalle-venta-body"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </main>
+
+    <!-- MODAL CLIENTE -->
+    <div class="modal fade" id="modalCliente" tabindex="-1">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <form id="form-cliente">
+            <div class="modal-header">
+              <h5 class="modal-title" id="titulo-modal-cliente">Cliente</h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+              <input type="hidden" id="cli-id"/>
+              <div class="mb-2"><label>DNI *</label><input type="text" id="cli-dni-in" class="form-control" maxlength="8" required></div>
+              <div class="mb-2"><label>RUC</label><input type="text" id="cli-ruc-in" class="form-control" maxlength="11"></div>
+              <div class="mb-2"><label>Nombres *</label><input type="text" id="cli-nombres-in" class="form-control" required></div>
+              <div class="mb-2"><label>Celular</label><input type="text" id="cli-cel-in" class="form-control"></div>
+              <div class="mb-2"><label>Dirección</label><input type="text" id="cli-dir-in" class="form-control"></div>
+              <div class="mb-2"><label>Correo *</label><input type="email" id="cli-mail-in" class="form-control" required></div>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+              <button type="submit" class="btn btn-primary">Guardar</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <!-- TOAST CONTAINER -->
+    <div id="toast-container" style="position:fixed;top:20px;right:25px;z-index:3000"></div>
+
+  </div>
+
+  <!-- SCRIPTS -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="js/adminlte.js"></script>
+  <script src="https://code.jquery.com/jquery-3.7.0.js"></script>
+  <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+  <script src="https://cdn.datatables.net/buttons/2.4.1/js/dataTables.buttons.min.js"></script>
+  <script src="https://cdn.datatables.net/buttons/2.4.1/js/buttons.html5.min.js"></script>
+  <script src="https://cdn.datatables.net/buttons/2.4.1/js/buttons.print.min.js"></script>
+  <script src="https://cdn.datatables.net/buttons/2.4.1/js/buttons.colVis.min.js"></script>
+  <script src="https://cdn.datatables.net/responsive/2.5.0/js/dataTables.responsive.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/pdfmake.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/vfs_fonts.js"></script>
+  <script>
+(function(){
+  const raw = localStorage.getItem('session');
+  if (!raw) return window.location.href = 'login.html';
+
+  let session;
+  try { session = JSON.parse(raw); } catch {
+    localStorage.removeItem('session');
+    return window.location.href = 'login.html';
+  }
+  if (!session.loggedIn) return window.location.href = 'login.html';
+
+  // Compat: soporta array de objetos (nuevo) y array de strings (viejo)
+const can = (mod) => {
+  const acc = session.user.accesos || [];
+  // si son objetos:
+  if (acc.length && typeof acc[0] === 'object') {
+    return acc.some(a => String(a.modulo || '').toUpperCase() === mod && a.acceso === true);
+  }
+  // si son strings:
+  return acc.map(x => String(x).toUpperCase()).includes(mod);
+};
+
+
+  // 1) Ocultar ítems del menú lateral (asegúrate de usar estos IDs en el HTML)
+  const byId = id => document.getElementById(id);
+  const hide = el => el && (el.style.display = 'none');
+
+  // IDs esperados en tu sidebar:
+  // <li id="menu-usuarios"> ... </li>
+  // <li id="menu-clientes"> ... </li>
+  // <li id="menu-productos"> ... </li>
+  // <li id="menu-ventas"> ... </li>
+  if (!can('USUARIOS'))  hide(byId('menu-usuarios'));
+  if (!can('CLIENTES'))  hide(byId('menu-clientes'));
+  if (!can('PRODUCTOS')) hide(byId('menu-productos'));
+  if (!can('VENTAS'))    hide(byId('menu-ventas'));
+
+  // 2) Bloquear acceso directo por URL:
+  // Mapeo simple página → módulo
+  const pageToModule = {
+    'usuarios.html':  'USUARIOS',
+    'clientes.html':  'CLIENTES',
+    'productos.html': 'PRODUCTOS',
+    'ventas.html':    'VENTAS'
+  };
+  const path = location.pathname.split('/').pop() || 'index.html';
+  const needed = pageToModule[path];
+  if (needed && !can(needed)) {
+    // Redirige a inicio o a una 403
+    return window.location.href = 'index.html';
+  }
+
+  // 3) Exponer sesión para otras scripts
+  window.__SESSION__ = session;
+})();
+</script>
+
+  <script>
+    // =====================
+    // CONSTANTE DE API
+    // =====================
+    const API = '';
+
+    // =====================
+    // HELPERS & TOASTS
+    // =====================
+    function mostrarToast(msg, tipo='success') {
+      const clases = { success:'bg-success text-white', danger:'bg-danger text-white' };
+      const iconos = { success:'bi-check-circle-fill', danger:'bi-x-circle-fill' };
+      const toast = document.createElement('div');
+      toast.className = `toast align-items-center ${clases[tipo]} border-0 show`;
+      toast.innerHTML = `
+        <div class="d-flex">
+          <div class="toast-body"><i class="bi ${iconos[tipo]} me-2"></i>${msg}</div>
+          <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
+        </div>`;
+      document.getElementById('toast-container').appendChild(toast);
+      setTimeout(()=> toast.remove(), 3000);
+    }
+
+    // =====================
+    // SESIÓN & LOGOUT
+    // =====================
+    ;(() => {
+      const raw = localStorage.getItem('session');
+      if (!raw) return location.href='login.html';
+      let s;
+      try { s=JSON.parse(raw); } catch{ localStorage.removeItem('session'); return location.href='login.html'; }
+      if (!s.loggedIn) return location.href='login.html';
+      document.getElementById('navbar-username').textContent = s.user.username;
+      document.getElementById('user-fullname').textContent  = s.user.nombreCompleto;
+      document.getElementById('user-email').textContent     = s.user.email;
+      document.getElementById('user-address').textContent   = s.user.direccion;
+      document.querySelectorAll('.user-image').forEach(img=>{
+        img.src = s.user.avatarUrl||'/assets/img/alexanderpierce.jpg';
+      });
+      document.getElementById('btn-logout').onclick = e=>{
+        e.preventDefault(); localStorage.removeItem('session'); location.href='login.html';
+      };
+    })();
+
+    // =====================
+    // VARIABLES GLOBALES
+    // =====================
+    let clientes = [], clienteActual = null;
+    let productos = [], filtro = '';
+    let productosSeleccionados = [];
+
+    // =====================
+    // CRUD CLIENTES
+    // =====================
+    async function cargarClientes() {
+      const resp = await fetch(`${API}/api/clientes`);
+      if (!resp.ok) {
+        mostrarToast('Error al cargar clientes','danger');
+        return;
+      }
+      const json = await resp.json();
+      clientes = Array.isArray(json.data) ? json.data : [];
+      const sel = document.getElementById('select-cliente');
+      sel.innerHTML = [
+        `<option value="">Seleccione cliente...</option>`,
+        ...clientes.map(c => `<option value="${c.id}">${c.nombres}</option>`)
+      ].join('');
+    }
+    function mostrarCliente(id) {
+      const c = clientes.find(x=>x.id==id);
+      if (!c) return;
+      clienteActual = c;
+  document.getElementById('cli-dni').textContent = c.dni || '-';
+  document.getElementById('cli-ruc').textContent = c.ruc || '-';
+  document.getElementById('cli-nombres').textContent = c.nombres || '-';
+  document.getElementById('cli-cel').textContent = c.celular || '-';
+  document.getElementById('cli-dir').textContent = c.direccion || '-';
+  document.getElementById('cli-mail').textContent = c.correo || '-';
+}
+
+    // =====================
+    // CRUD PRODUCTOS
+    // =====================
+    async function cargarProductos() {
+      const resp = await fetch(`${API}/api/productos`);
+      if (!resp.ok) {
+        mostrarToast('Error al cargar productos','danger');
+        return;
+      }
+      const json = await resp.json();
+      productos = Array.isArray(json.data) ? json.data : [];
+      renderListaProductos();
+    }
+    function renderListaProductos() {
+      const tbody = $('#lista-productos').empty();
+      productos.forEach((p,i)=>{
+        if (p.cantidad<=0) return;
+        if (!p.nombre.toLowerCase().includes(filtro)) return;
+        const color = p.cantidad<=5?'bg-danger': p.cantidad<=9?'bg-warning':'bg-success';
+        tbody.append(`
+          <tr>
+            <td>${i+1}</td>
+            <td>${p.foto?`<img src="${p.foto}" class="producto-img">`:``}</td>
+            <td>${p.nombre}</td>
+            <td><span class="badge stock-badge ${color}">${p.cantidad}</span></td>
+            <td><input type="number" min="1" id="cant-${p.id}" class="form-control form-control-sm" style="width:60px" value="1"></td>
+            <td><input type="number" min="0.01" step="0.01" id="precio-${p.id}" class="form-control form-control-sm" style="width:80px" value="${Number(p.precio).toFixed(2)}"></td>
+            <td><button class="btn btn-outline-primary btn-sm mini-btn" onclick="agregarProducto(${p.id})"><i class="bi bi-plus-circle"></i></button></td>
+          </tr>`);
+      });
+    }
+    function agregarProducto(id) {
+      const p = productos.find(x=>x.id==id);
+      const cant   = +$(`#cant-${id}`).val();
+      const precio = +$(`#precio-${id}`).val();
+      if (cant<=0||precio<=0) return mostrarToast('Cantidad o precio inválidos','danger');
+      const idx = productosSeleccionados.findIndex(x=>x.id==id);
+      if (idx>-1) {
+        productosSeleccionados[idx].cantidad += cant;
+        productosSeleccionados[idx].precio   = precio;
+      } else {
+        productosSeleccionados.push({ id, nombre:p.nombre, foto:p.foto, cantidad:cant, precio });
+      }
+      renderSeleccionados();
+    }
+    function renderSeleccionados() {
+      const tbody = $('#tabla-final').empty();
+      let total = 0;
+      productosSeleccionados.forEach((p,i)=>{
+        const sub = p.cantidad*p.precio; total+=sub;
+        tbody.append(`
+          <tr>
+            <td>${p.foto?`<img src="${p.foto}" class="producto-img">`:``}</td>
+            <td>${p.nombre}</td>
+            <td>${p.cantidad}</td>
+            <td>${p.precio.toFixed(2)}</td>
+            <td>${sub.toFixed(2)}</td>
+            <td><button class="btn btn-danger btn-sm mini-btn" onclick="quitarProducto(${i})"><i class="bi bi-trash"></i></button></td>
+          </tr>`);
+      });
+      $('#venta-total').text(total.toFixed(2));
+    }
+    function quitarProducto(i) {
+      productosSeleccionados.splice(i,1);
+      renderSeleccionados();
+    }
+
+    // =====================
+    // RENDER CAMPOS DINÁMICOS
+    // =====================
+    function renderComprobanteFields() {
+      const tipo = $('#select-comp').val();
+      const div  = $('#div-comp-dinamico');
+      if (tipo==='FACTURA') {
+        div.html(`
+          <div class="mb-2"><label>RUC *</label><input type="text" id="input-ruc" class="form-control form-control-sm" maxlength="11"></div>
+          <div class="mb-2"><label>Razón Social *</label><input type="text" id="input-razon" class="form-control form-control-sm"></div>`);
+      } else if (tipo==='BOLETA') {
+        div.html(`
+          <div class="mb-2"><label>Tipo Doc *</label>
+            <select id="input-tipoDoc" class="form-select form-select-sm">
+              <option value="DNI">DNI</option>
+              <option value="PASAPORTE">Pasaporte</option>
+            </select>
+          </div>
+          <div class="mb-2"><label>Número Doc *</label><input type="text" id="input-numDoc" class="form-control form-control-sm"></div>`);
+      } else {
+        div.empty();
+      }
+    }
+    function handlePagoFields() {
+      const pago = $('#select-pago').val();
+      const cont = $('#metodo-extra');
+      cont.empty();
+      if (pago==='CREDITO'||pago==='DEBITO') {
+        cont.html(`<label>N° Tarjeta:</label><input type="text" id="num-tarjeta" class="form-control form-control-sm mb-1" maxlength="16">`);
+      } else if (pago==='EFECTIVO') {
+        cont.html(`
+          <label>Monto Efectivo:</label>
+          <input type="number" id="monto-efectivo" class="form-control form-control-sm mb-1">
+          <label>Devolución:</label>
+          <input type="number" id="monto-devol" class="form-control form-control-sm" readonly>`);
+      }
+    }
+
+    // =====================
+    // GUARDAR VENTA
+    // =====================
+    async function guardarVenta() {
+      if (!clienteActual) return mostrarToast('Selecciona un cliente','danger');
+      if (!productosSeleccionados.length) return mostrarToast('Agrega productos','danger');
+      const tipoComp = $('#select-comp').val();
+      const metodo   = $('#select-pago').val();
+      if (!tipoComp||!metodo) return mostrarToast('Selecciona comprobante y método de pago','danger');
+
+      // datos comprobante
+      let ruc='', razon='', tipoDoc='', numDoc='';
+      if (tipoComp==='FACTURA') {
+        ruc   = $('#input-ruc').val()||'';
+        razon = $('#input-razon').val()||'';
+        if (!ruc||!razon) return mostrarToast('RUC y razón social requeridos','danger');
+      }
+      if (tipoComp==='BOLETA') {
+        tipoDoc = $('#input-tipoDoc').val()||'';
+        numDoc  = $('#input-numDoc').val()||'';
+        if (!tipoDoc||!numDoc) return mostrarToast('Tipo y número doc requeridos','danger');
+      }
+
+      // datos pago
+      let numTar=null, montoEf=null, montoDev=null;
+      if (metodo==='CREDITO'||metodo==='DEBITO') {
+        numTar = $('#num-tarjeta').val()||'';
+        if (!numTar) return mostrarToast('N° tarjeta requerido','danger');
+      }
+      if (metodo==='EFECTIVO') {
+        montoEf = +$('#monto-efectivo').val()||0;
+        const tot = +$('#venta-total').text();
+        montoDev = +(montoEf - tot).toFixed(2);
+        if (montoEf < tot) return mostrarToast('Efectivo insuficiente','danger');
+      }
+
+      const payload = {
+        idCliente: clienteActual.id,
+        idUsuario: (window.__SESSION__?.user?.id) || 0,
+        tipoComp,
+        numeroDoc: numDoc,
+        ruc,
+        razonSocial: razon,
+        tipoDoc,
+        metodoPago: metodo,
+        numTarjeta: numTar,
+        montoEfectivo: montoEf,
+        montoDevolucion: montoDev,
+        total: +$('#venta-total').text(),
+        detalle: productosSeleccionados.map(p=>({
+          idProducto: p.id,
+          cantidad: p.cantidad,
+          precio: p.precio
+        }))
+      };
+
+      try {
+        const res = await fetch(`${API}/api/ventas`, {
+          method:'POST',
+          headers:{'Content-Type':'application/json'},
+          body: JSON.stringify(payload)
+        });
+        if (!res.ok) throw '';
+        mostrarToast('Venta registrada');
+        setTimeout(()=> location.reload(), 800);
+      } catch {
+        mostrarToast('Error al guardar venta','danger');
+      }
+    }
+
+    // =====================
+   
+    // =====================
+    // INICIALIZACIÓN
+    // =====================
+    $(document).ready(async function(){
+      // 1) Cargo clientes y productos
+      await cargarClientes();
+      await cargarProductos();
+
+      // 2) Cliente
+      $('#select-cliente').on('change', e=> mostrarCliente(e.target.value));
+      $('#btn-add-cliente').on('click', ()=>{
+        $('#titulo-modal-cliente').text('Agregar Cliente');
+        $('#form-cliente')[0].reset();
+        $('#cli-id').val('');
+        new bootstrap.Modal($('#modalCliente')).show();
+      });
+      $('#btn-editar-cliente').on('click', ()=>{
+        if (!clienteActual) return mostrarToast('Selecciona un cliente','danger');
+        $('#titulo-modal-cliente').text('Editar Cliente');
+        $('#cli-id').val(clienteActual.id);
+        $('#cli-dni-in').val(clienteActual.dni);
+        $('#cli-ruc-in').val(clienteActual.ruc);
+        $('#cli-nombres-in').val(clienteActual.nombres);
+        $('#cli-cel-in').val(clienteActual.celular);
+        $('#cli-dir-in').val(clienteActual.direccion);
+        $('#cli-mail-in').val(clienteActual.correo);
+        new bootstrap.Modal($('#modalCliente')).show();
+      });
+      $('#form-cliente').on('submit', async function(e){
+        e.preventDefault();
+        const id = $('#cli-id').val();
+        const payload = {
+          dni: $('#cli-dni-in').val(),
+          ruc: $('#cli-ruc-in').val(),
+          nombres: $('#cli-nombres-in').val(),
+          celular: $('#cli-cel-in').val(),
+          direccion: $('#cli-dir-in').val(),
+          correo: $('#cli-mail-in').val()
+        };
+        try {
+          const res = await fetch(`${API}/api/clientes${id?'/'+id:''}`, {
+            method: id?'PUT':'POST',
+            headers:{'Content-Type':'application/json'},
+            body: JSON.stringify(payload)
+          });
+          if (!res.ok) throw await res.json();
+          mostrarToast('Cliente guardado');
+          bootstrap.Modal.getInstance($('#modalCliente')).hide();
+          await cargarClientes();
+        } catch(err){
+          mostrarToast(err.error||'Error','danger');
+        }
+      });
+
+      // 3) Filtrar productos
+      $('#buscar-prod').on('input', e=>{
+        filtro = e.target.value.trim().toLowerCase();
+        renderListaProductos();
+      });
+      $('#select-comp').on('change', renderComprobanteFields);
+      $('#select-pago').on('change', handlePagoFields);
+
+      // 4) Guardar venta
+      $('#btn-guardar-venta').on('click', guardarVenta);
+
+
+      // 5) DataTable Listado de Ventas
+    const table = $('#tabla-ventas').DataTable({
+    serverSide: true,
+    processing: true,
+    ajax: {
+      url: '/api/ventas',      // <- aquí
+      type: 'GET',
+      dataSrc: 'data'
+    },
+    columns: [
+      { data: 'id',        title: 'ID',        className:'text-center', width:'5%' },
+      { data: 'cliente',   title: 'Cliente',   className:'text-wrap',   width:'18%' },
+      { data: 'correo',    title: 'Email',     className:'text-wrap',   width:'18%' },
+      { data: 'direccion', title: 'Dirección', className:'text-wrap',   width:'18%' },
+      { data: 'fecha',
+        title: 'Fecha',
+        render: f=> f? new Date(f).toLocaleString() : '',
+        className:'text-center', width:'12%' },
+      { data: 'numeroDoc', title: 'N° Doc',     className:'text-center', width:'8%',  defaultContent:'-' },
+      { data: 'metodoPago',title: 'Método Pago',className:'text-center', width:'8%',  defaultContent:'-' },
+      { data: 'items',     title: 'Ítems',      className:'text-center', width:'5%' },
+      { data: 'total',
+        title: 'Total',
+        render: t=> `S/ ${Number(t).toFixed(2)}`,
+        className:'text-end', width:'8%' },
+    { data: 'id', orderable:false, searchable:false, className:'text-center', width:'6%',
+  render: id => `
+    <button class="btn btn-sm btn-primary btn-detalle" data-id="${id}" title="Ver detalle">
+      <i class="bi bi-search"></i>
+    </button>`
+}
+    ],
+    order: [[0,'desc']],
+    dom: 'Bfrtip',
+    buttons: ['copy','csv','excel','pdf','print','colvis'],
+    responsive: true,
+    language: {
+      lengthMenu: 'Mostrar _MENU_ registros por página',
+      zeroRecords: 'No se encontraron resultados',
+      info: 'Mostrando _START_ a _END_ de _TOTAL_ ventas',
+      infoEmpty: 'Mostrando 0 de 0',
+      infoFiltered: '(filtrado de _MAX_ totales)',
+      search: 'Buscar:',
+      paginate: { first:'Primero', last:'Último', next:'Siguiente', previous:'Anterior' },
+      buttons: { copy:'Copiar', print:'Imprimir', colvis:'Columnas' }
+    },
+    error: (_, __, thrown) => console.error('DataTable error:', thrown)
+  });
+
+  // Ajustar columnas cuando abras la pestaña "Listado"
+  $('button[data-bs-target="#panel-listado"]').on('shown.bs.tab', () => {
+    table.columns().every(() => {}); // fuerza cálculo
+    table.columns.adjust().responsive.recalc();
+  });
+});
+
+
+
+$('#tabla-ventas').on('click', '.btn-detalle', async function () {
+  const id = $(this).data('id');
+
+  try {
+    const r = await fetch(`/api/ventas/${id}`);
+    if (!r.ok) throw new Error('No se pudo obtener el detalle');
+    const v = await r.json();
+
+    const fmt = n => (Number(n) || 0).toFixed(2);
+
+    const filas = (v.detalle || []).map(d => `
+
+   <tr>
+    <td>${d.foto ? `<img src="${d.foto}" alt="foto" style="width:50px; height:auto;">` : ''}</td>
+    <td>${d.nombre}</td>
+        <td class="text-center">${d.cantidad}</td>
+        <td class="text-end">S/ ${fmt(d.precio)}</td>
+        <td class="text-end">S/ ${fmt(d.precio * d.cantidad)}</td>
+      </tr>
+    `).join('');
+
+    $('#detalle-venta-body').html(`
+      <p><b>Cliente:</b> ${v.cliente}</p>
+      <p><b>Fecha:</b> ${v.fecha ? new Date(v.fecha).toLocaleString() : ''}</p>
+      <p><b>Comprobante:</b> ${v.tipoComp || ''} ${v.numeroDoc || ''}</p>
+      <hr/>
+      <table class="table table-sm table-bordered align-middle">
+        <thead>
+          <tr>
+            <th style="width:60px">Foto</th>
+            <th>Producto</th>
+            <th class="text-center" style="width:80px">Cant.</th>
+            <th class="text-end" style="width:120px">Precio</th>
+            <th class="text-end" style="width:120px">Subtotal</th>
+          </tr>
+        </thead>
+        <tbody>${filas}</tbody>
+        <tfoot>
+          <tr>
+            <th colspan="4" class="text-end">TOTAL</th>
+            <th class="text-end">S/ ${fmt(v.total)}</th>
+          </tr>
+        </tfoot>
+      </table>
+    `);
+
+    new bootstrap.Modal(document.getElementById('modalDetalleVenta')).show();
+  } catch (e) {
+    console.error(e);
+    mostrarToast('No se pudo cargar el detalle', 'danger');
+  }
+});
+
+  </script>
+    <script src="js/guard-accesos.js"></script>
+
+</body>
+</html>

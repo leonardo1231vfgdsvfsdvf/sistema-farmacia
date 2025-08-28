@@ -1,0 +1,212 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>Registro - Farmacia Sistema</title>
+
+  <!-- Bootstrap Icons -->
+  <link
+    rel="stylesheet"
+    href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css"
+  />
+  <!-- Overlayscrollbars -->
+  <link
+    rel="stylesheet"
+    href="https://cdn.jsdelivr.net/npm/overlayscrollbars@2.11.0/styles/overlayscrollbars.min.css"
+  />
+  <!-- Bootstrap CSS -->
+  <link
+    href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css"
+    rel="stylesheet"
+  />
+  <!-- AdminLTE CSS -->
+  <link rel="stylesheet" href="css/adminlte.css"/>
+</head>
+<body class="hold-transition register-page bg-body-tertiary">
+  <div class="register-box">
+    <!-- Logo -->
+    <div class="register-logo">
+      <a href="index.html"><b>Farmacia</b>Sistema</a>
+    </div>
+    <!-- Card -->
+    <div class="card">
+      <div class="card-body register-card-body">
+        <p class="login-box-msg">Registrar nueva cuenta</p>
+
+        <form id="form-register">
+          <!-- Nombre completo -->
+          <div class="input-group mb-3">
+            <input
+              type="text"
+              class="form-control"
+              id="reg-nombreCompleto"
+              placeholder="Nombres y Apellidos"
+              required
+            />
+            <span class="input-group-text">
+              <i class="bi bi-person-badge"></i>
+            </span>
+          </div>
+          <!-- Usuario -->
+          <div class="input-group mb-3">
+            <input
+              type="text"
+              class="form-control"
+              id="reg-username"
+              placeholder="Usuario"
+              required
+            />
+            <span class="input-group-text">
+              <i class="bi bi-person"></i>
+            </span>
+          </div>
+          <!-- Celular -->
+          <div class="input-group mb-3">
+            <input
+              type="tel"
+              class="form-control"
+              id="reg-celular"
+              placeholder="Celular"
+              required
+            />
+            <span class="input-group-text">
+              <i class="bi bi-phone"></i>
+            </span>
+          </div>
+          <!-- Correo -->
+          <div class="input-group mb-3">
+            <input
+              type="email"
+              class="form-control"
+              id="reg-email"
+              placeholder="Correo"
+              required
+            />
+            <span class="input-group-text">
+              <i class="bi bi-envelope"></i>
+            </span>
+          </div>
+          <!-- Contraseña -->
+          <div class="input-group mb-3">
+            <input
+              type="password"
+              class="form-control"
+              id="reg-password"
+              placeholder="Contraseña"
+              required
+            />
+            <span class="input-group-text">
+              <i class="bi bi-lock"></i>
+            </span>
+          </div>
+          <!-- Confirmar contraseña -->
+          <div class="input-group mb-3">
+            <input
+              type="password"
+              class="form-control"
+              id="reg-password2"
+              placeholder="Confirmar contraseña"
+              required
+            />
+            <span class="input-group-text">
+              <i class="bi bi-lock-fill"></i>
+            </span>
+          </div>
+
+          <div class="row">
+            <div class="col-8">
+              <!-- espacio vacío -->
+            </div>
+            <div class="col-4">
+              <button type="submit" class="btn btn-primary btn-block">
+                Registrar
+              </button>
+            </div>
+          </div>
+        </form>
+
+        <p class="mt-3 mb-0 text-center">
+          <a href="login.html">Ya tengo una cuenta</a>
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Scripts -->
+  <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.min.js"></script>
+  <script src="js/adminlte.js"></script>
+  <script>
+    document.getElementById('form-register').addEventListener('submit', function(e) {
+      e.preventDefault();
+      // validación básica de contraseñas iguales
+      const p1 = document.getElementById('reg-password').value;
+      const p2 = document.getElementById('reg-password2').value;
+      if (p1 !== p2) {
+        return alert('Las contraseñas no coinciden');
+      }
+      // cargar lista existente
+      const lista = JSON.parse(localStorage.getItem('usuarios')) || [];
+      // calcular nuevo ID
+      const nextId = lista.reduce((max, u) => Math.max(max, u.id), 0) + 1;
+      // crear objeto usuario
+      const newUser = {
+        id: nextId,
+        username: document.getElementById('reg-username').value.trim(),
+        nombreCompleto: document.getElementById('reg-nombreCompleto').value.trim(),
+        celular: document.getElementById('reg-celular').value.trim(),
+        email: document.getElementById('reg-email').value.trim()
+        // (no guardamos la contraseña en localStorage en este ejemplo)
+      };
+      lista.push(newUser);
+      localStorage.setItem('usuarios', JSON.stringify(lista));
+      // redirigir al listado
+      window.location.href = 'usuarios.html';
+    });
+  </script>
+  <script>
+  document.getElementById('form-register').addEventListener('submit', async function(e) {
+    e.preventDefault();
+    const p1 = document.getElementById('reg-password').value;
+    const p2 = document.getElementById('reg-password2').value;
+    if (p1 !== p2) {
+      return alert('Las contraseñas no coinciden');
+    }
+
+    // cargar lista existente
+    const lista = JSON.parse(localStorage.getItem('usuarios')) || [];
+    const nextId = lista.reduce((max, u) => Math.max(max, u.id), 0) + 1;
+    const newUser = {
+      id: nextId,
+      username: document.getElementById('reg-username').value.trim(),
+      nombreCompleto: document.getElementById('reg-nombreCompleto').value.trim(),
+      celular: document.getElementById('reg-celular').value.trim(),
+      email: document.getElementById('reg-email').value.trim()
+      // no guardamos la password en tu API por seguridad, o la incluyes si quieres
+    };
+
+    // 1) Guarda en LocalStorage
+    lista.push(newUser);
+    localStorage.setItem('usuarios', JSON.stringify(lista));
+
+    // 2) Envía al servidor
+    try {
+      const resp = await fetch('http://localhost:3000/users', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(newUser)
+      });
+      const saved = await resp.json();
+      console.log('✅  Usuario enviado al servidor:', saved);
+    } catch (err) {
+      console.error('❌  Error al enviar al servidor:', err);
+    }
+
+    // 3) Redirige al listado
+    window.location.href = 'usuarios.html';
+  });
+</script>
+
+</body>
+</html>

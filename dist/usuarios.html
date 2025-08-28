@@ -1,0 +1,697 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <title>Usuarios - Farmacia Sistema</title>
+
+    <!-- Bootstrap Icons & Overlayscrollbars -->
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/overlayscrollbars@2.11.0/styles/overlayscrollbars.min.css"
+    />
+
+    <!-- AdminLTE CSS -->
+    <link rel="stylesheet" href="css/adminlte.css"/>
+
+    <!-- DataTables CSS & Buttons & Responsive -->
+    <link
+      rel="stylesheet"
+      href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdn.datatables.net/buttons/2.4.1/css/buttons.dataTables.min.css"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdn.datatables.net/responsive/2.5.0/css/responsive.dataTables.min.css"
+    />
+<!-- Favicon (Usuarios) -->
+<link rel="icon" type="image/svg+xml" href="favicons/usuarios.svg?v=1">
+
+<meta name="theme-color" content="#6f42c1">
+
+
+
+
+    <style>
+      /* ─── CABECERA AZUL FLEXIBLE ─── */
+      .card-header {
+        display: flex !important;
+        align-items: center;
+        padding: 1rem 1.5rem;
+        gap: 1rem;
+      }
+      .card-header .card-title {
+        margin: 0;
+        font-size: 1.25rem;
+        font-weight: 500;
+      }
+      #btn-add-user { margin-left: auto; }
+
+      /* Botones DataTables dentro de header */
+      .card-header .dt-buttons {
+        display: flex !important;
+        gap: 0.5rem !important;
+        margin-left: 2rem;
+      }
+      .card-header .dt-buttons .dt-button {
+        background: #fff;
+        border: 1px solid #ccc;
+      }
+
+      /* Buscador */
+      #table-filter { margin-left: 2rem; }
+      #table-filter .form-control { width: 200px; }
+
+      /* Toasts */
+      #alert-container .toast { margin-bottom: 0.5rem; }
+
+      /* Tabla */
+      #tabla-usuarios th, #tabla-usuarios td {
+        white-space: nowrap;
+        vertical-align: middle;
+      }
+      #tabla-usuarios th:nth-child(5),
+      #tabla-usuarios td:nth-child(5) { min-width: 100px; text-align: center; }
+    </style>
+  </head>
+
+  <body class="layout-fixed sidebar-expand-lg sidebar-open bg-body-tertiary">
+    <div class="app-wrapper">
+      <!-- HEADER -->
+      <nav class="app-header navbar navbar-expand bg-body">
+        <div class="container-fluid">
+          <ul class="navbar-nav">
+            <li class="nav-item">
+              <a class="nav-link" data-lte-toggle="sidebar" href="#">
+                <i class="bi bi-list"></i>
+              </a>
+            </li>
+          </ul>
+          <ul class="navbar-nav ms-auto">
+            <li class="nav-item dropdown user-menu">
+              <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">
+                <img
+                  src="/assets/img/alexanderpierce.jpg"
+                  class="user-image img-circle elevation-2"
+                  width="30" height="30"
+                />
+                <span id="navbar-username" class="d-none d-md-inline">Usuario</span>
+              </a>
+              <ul class="dropdown-menu dropdown-menu-end" style="min-width:220px;">
+                <li class="user-header bg-primary text-center">
+                  <img
+                    src="/assets/img/alexanderpierce.jpg"
+                    class="img-circle elevation-2 mb-2"
+                    width="80" height="80"
+                  />
+                  <p>
+                    <strong id="user-fullname">Nombre Completo</strong><br/>
+                    <small id="user-email">email@ejemplo.com</small><br/>
+                    <small id="user-address">Dirección</small>
+                  </p>
+                </li>
+                <li class="user-footer d-flex justify-content-between px-2">
+                  <a href="perfil.html" class="btn btn-default btn-flat">Perfil</a>
+                  <a href="login.html" id="btn-logout" class="btn btn-default btn-flat">Cerrar Sesión</a>
+                </li>
+              </ul>
+            </li>
+          </ul>
+        </div>
+      </nav>
+
+      <!-- SIDEBAR -->
+      <aside class="app-sidebar bg-body-secondary shadow" data-bs-theme="dark">
+        <div class="sidebar-brand">
+          <a href="index.html" class="brand-link">
+            <img src="assets/img/logofarmacia.png" class="brand-image opacity-75 shadow" style="width:36px"/>
+            <span class="brand-text fw-light">FARMACIA SISTEMA</span>
+          </a>
+        </div>
+        <div class="sidebar-wrapper">
+          <nav class="mt-2">
+            <ul class="nav sidebar-menu flex-column">
+              <li id="menu-usuarios"  class="nav-item">
+                <a href="usuarios.html" class="nav-link active">
+                  <i class="nav-icon bi bi-table"></i><p>USUARIOS</p>
+                </a>
+              </li>
+              <li id="menu-clientes" class="nav-item">
+                <a href="clientes.html" class="nav-link">
+                  <i class="nav-icon bi bi-people"></i><p>CLIENTES</p>
+                </a>
+              </li>
+              <li id="menu-productos" class="nav-item">
+                <a href="productos.html" class="nav-link">
+                  <i class="nav-icon bi bi-box-seam"></i><p>PRODUCTOS</p>
+                </a>
+              </li>
+              <li id="menu-ventas" class="nav-item">
+                <a href="ventas.html" class="nav-link">
+                  <i class="nav-icon bi bi-cash-stack"></i><p>VENTAS</p>
+                </a>
+              </li>
+            </ul>
+          </nav>
+        </div>
+      </aside>
+
+      <!-- MAIN CONTENT -->
+      <main class="app-main">
+        <div class="container-fluid px-4">
+          <div class="card mt-4">
+            <div class="card-header bg-primary text-white">
+              <h3 class="card-title mb-0">Lista de Usuarios</h3>
+
+              <button
+                id="btn-add-user"
+                class="btn btn-success btn-sm ms-auto"
+                data-bs-toggle="modal"
+                data-bs-target="#modalAddUser"
+              >
+                <i class="bi bi-plus-lg"></i> Agregar Usuario
+              </button>
+
+              <div id="table-filter" class="ms-3"></div>
+            </div>
+
+            <div id="alert-container" class="px-3 py-2"></div>
+
+            <div class="card-body p-0">
+              <div class="table-responsive">
+                <table id="tabla-usuarios" class="display nowrap" style="width:100%">
+                  <thead>
+                    <tr>
+                      <th></th> <!-- control responsive -->
+                      <th>ID</th>
+                      <th>Usuario</th>
+                      <th>Nombres y Apellidos</th>
+                      <th class="text-center">Celular</th>
+                      <th>Correo</th>
+                      <th>Contraseña</th>
+                      <th>DNI</th>
+                      <th>Dirección</th>
+                      <th>Rol</th>
+                      <th>Acciones</th>
+                    </tr>
+                  </thead>
+                  <tbody></tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+      </main>
+
+      <!-- Cambiar Contraseña Modal -->
+      <div class="modal fade" id="modalChangePwd" tabindex="-1" aria-labelledby="modalChangePwdLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered"><div class="modal-content">
+          <form id="form-change-pwd">
+            <div class="modal-header">
+              <h5 class="modal-title" id="modalChangePwdLabel">Cambiar Contraseña</h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+              <div class="mb-3"><label class="form-label">ID Usuario</label><input id="pwd-id" class="form-control" readonly/></div>
+              <div class="mb-3"><label class="form-label">Nombre y Apellidos</label><input id="pwd-nombre" class="form-control" readonly/></div>
+              <hr/>
+              <div class="mb-3"><label class="form-label">Contraseña actual</label><input id="pwd-current" class="form-control" readonly/></div>
+              <div class="mb-3"><label class="form-label">Nueva contraseña</label><input id="pwd-new" type="password" class="form-control" required/></div>
+              <div class="mb-3"><label class="form-label">Confirmar contraseña</label><input id="pwd-confirm" type="password" class="form-control" required/></div>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+              <button type="submit" class="btn btn-primary">Guardar</button>
+            </div>
+          </form>
+        </div></div>
+      </div>
+
+      <!-- Agregar Usuario Modal -->
+      <div class="modal fade" id="modalAddUser" tabindex="-1" aria-labelledby="modalAddUserLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-lg"><div class="modal-content">
+          <form id="form-add-user">
+            <div class="modal-header bg-success text-white">
+              <h5 class="modal-title" id="modalAddUserLabel">Agregar Nuevo Usuario</h5>
+              <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body row g-3">
+              <div class="col-md-6"><label class="form-label">Usuario</label><input id="add-username" class="form-control" required/></div>
+              <div class="col-md-6"><label class="form-label">Nombre y Apellidos</label><input id="add-nombreCompleto" class="form-control" required/></div>
+              <div class="col-md-6"><label class="form-label">Celular</label><input id="add-celular" class="form-control" required/></div>
+              <div class="col-md-6"><label class="form-label">Correo</label><input id="add-email" type="email" class="form-control" required/></div>
+              <div class="col-md-6"><label class="form-label">DNI</label><input id="add-dni" class="form-control" required/></div>
+              <div class="col-md-6"><label class="form-label">Dirección</label><input id="add-direccion" class="form-control" required/></div>
+              <div class="col-md-6"><label class="form-label">Contraseña</label><input id="add-password" type="password" class="form-control" required/></div>
+              <div class="col-md-6"><label class="form-label">Confirmar contraseña</label><input id="add-password2" type="password" class="form-control" required/></div>
+              <div class="col-md-6">
+                <div class="form-floating mb-3">
+                  <select id="rol" class="form-select form-select-sm" required>
+                    <option value="" disabled selected>Seleccione un rol</option>
+                  </select>
+                  <label for="rol"><i class="bi bi-person-badge-fill me-1"></i>Rol</label>
+                </div>
+              </div>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+              <button type="submit" class="btn btn-success">Guardar</button>
+            </div>
+          </form>
+        </div></div>
+      </div>
+
+      <!-- Editar Usuario Modal (AZUL) -->
+      <div class="modal fade" id="modalEditUser" tabindex="-1" aria-labelledby="modalEditUserLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-lg"><div class="modal-content">
+          <form id="form-edit-user">
+            <div class="modal-header bg-primary text-white">
+              <h5 class="modal-title" id="modalEditUserLabel">Editar Usuario</h5>
+              <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+            </div>
+
+            <div class="modal-body row g-3">
+              <input type="hidden" id="edit-id"/>
+
+              <div class="col-md-6">
+                <label for="edit-username" class="form-label">Usuario</label>
+                <input type="text" id="edit-username" class="form-control" required />
+              </div>
+
+              <div class="col-md-6">
+                <label for="edit-nombreCompleto" class="form-label">Nombre y Apellidos</label>
+                <input type="text" id="edit-nombreCompleto" class="form-control" required />
+              </div>
+
+              <div class="col-md-6">
+                <label for="edit-celular" class="form-label">Celular</label>
+                <input type="text" id="edit-celular" class="form-control" required />
+              </div>
+
+              <div class="col-md-6">
+                <label for="edit-email" class="form-label">Correo</label>
+                <input type="email" id="edit-email" class="form-control" required />
+              </div>
+
+              <div class="col-md-6">
+                <label for="edit-dni" class="form-label">DNI</label>
+                <input type="text" id="edit-dni" class="form-control" required />
+              </div>
+
+              <div class="col-md-6">
+                <label for="edit-direccion" class="form-label">Dirección</label>
+                <input type="text" id="edit-direccion" class="form-control" required />
+              </div>
+
+              <div class="col-md-6">
+                <div class="form-floating mb-3">
+                  <select id="edit-rol" class="form-select form-select-sm" required>
+                    <option value="" disabled selected>Seleccione un rol</option>
+                  </select>
+                  <label for="edit-rol"><i class="bi bi-person-badge-fill me-1"></i>Rol</label>
+                </div>
+              </div>
+            </div>
+
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+              <button type="submit" class="btn btn-primary">Guardar cambios</button>
+            </div>
+          </form>
+        </div></div>
+      </div>
+
+      <!-- Footer -->
+      <footer class="app-footer">
+        <div class="float-end d-none d-sm-inline">Anything you want</div>
+        <strong>&copy; 2014-2025 <a href="https://adminlte.io">AdminLTE.io</a></strong>
+      </footer>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/overlayscrollbars@2.11.0/browser/overlayscrollbars.browser.es6.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="js/adminlte.js"></script>
+
+    <!-- jQuery & DataTables + Buttons + Responsive -->
+    <script src="https://code.jquery.com/jquery-3.7.0.js"></script>
+    <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/buttons/2.4.1/js/dataTables.buttons.min.js"></script>
+    <script src="https://cdn.datatables.net/buttons/2.4.1/js/buttons.html5.min.js"></script>
+    <script src="https://cdn.datatables.net/buttons/2.4.1/js/buttons.print.min.js"></script>
+    <script src="https://cdn.datatables.net/buttons/2.4.1/js/buttons.colVis.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/pdfmake.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/vfs_fonts.js"></script>
+    <script src="https://cdn.datatables.net/responsive/2.5.0/js/dataTables.responsive.min.js"></script>
+
+    <script>
+      (function(){
+        const raw = localStorage.getItem('session');
+        if (!raw) return window.location.href = 'login.html';
+
+        let session;
+        try { session = JSON.parse(raw); } catch {
+          localStorage.removeItem('session');
+          return window.location.href = 'login.html';
+        }
+        if (!session.loggedIn) return window.location.href = 'login.html';
+
+        // Helper de accesos (objetos o strings)
+        const can = (mod) => {
+          const acc = session.user.accesos || [];
+          if (acc.length && typeof acc[0] === 'object') {
+            return acc.some(a => String(a.modulo || '').toUpperCase() === mod && a.acceso === true);
+          }
+          return acc.map(x => String(x).toUpperCase()).includes(mod);
+        };
+
+        // Ocultar menú por permisos
+        const byId = id => document.getElementById(id);
+        const hide = el => el && (el.style.display = 'none');
+        if (!can('USUARIOS'))  hide(byId('menu-usuarios'));
+        if (!can('CLIENTES'))  hide(byId('menu-clientes'));
+        if (!can('PRODUCTOS')) hide(byId('menu-productos'));
+        if (!can('VENTAS'))    hide(byId('menu-ventas'));
+
+        // Bloquear acceso directo por URL
+        const pageToModule = {
+          'usuarios.html':  'USUARIOS',
+          'clientes.html':  'CLIENTES',
+          'productos.html': 'PRODUCTOS',
+          'ventas.html':    'VENTAS'
+        };
+        const path = location.pathname.split('/').pop() || 'index.html';
+        const needed = pageToModule[path];
+        if (needed && !can(needed)) return window.location.href = 'index.html';
+
+        // Exponer sesión
+        window.__SESSION__ = session;
+      })();
+    </script>
+
+    <script>
+      // ---------- Toast genérico ----------
+      function mostrarAlerta(texto, tipo = 'success') {
+        const colores = {
+          success: 'bg-success text-white',
+          danger:  'bg-danger text-white',
+          warning: 'bg-warning text-dark',
+          info:    'bg-info text-white'
+        };
+        const iconos = {
+          success: 'bi-check-circle-fill',
+          danger:  'bi-x-circle-fill',
+          warning: 'bi-exclamation-triangle-fill',
+          info:    'bi-info-circle-fill'
+        };
+        const toast = document.createElement('div');
+        toast.className = `toast align-items-center ${colores[tipo]} border-0 show`;
+        toast.innerHTML = `
+          <div class="d-flex">
+            <div class="toast-body">
+              <i class="bi ${iconos[tipo]} me-2"></i>${texto}
+            </div>
+            <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
+          </div>`;
+        document.getElementById('alert-container').appendChild(toast);
+        setTimeout(()=> toast.remove(), 3000);
+      }
+
+      $(document).ready(function(){
+        // ---------- DataTable ----------
+        const table = $('#tabla-usuarios').DataTable({
+          serverSide: true,
+          processing: false,
+          dom: 'Bfrtip',
+          pageLength: 10,
+          scrollX: true,
+          order: [[1, 'desc']], // por ID desc
+          responsive: {
+            details: { type: 'column', target: 0 }
+          },
+          columnDefs: [
+            { targets: 0, className: 'control text-center', orderable: false },
+            { targets: '_all', className: 'text-center' },
+            { targets: -1, responsivePriority: 1 }
+          ],
+          buttons: ['copy','csv','excel','pdf','print','colvis'],
+          ajax: {
+            url: '/users',
+            type: 'GET',
+            data: d => ({
+              draw:    d.draw,
+              page:    Math.floor(d.start/d.length)+1,
+              size:    d.length,
+              search:  d.search.value,
+              sortBy:  d.columns[d.order[0].column].data,
+              order:   d.order[0].dir
+            }),
+            dataSrc: 'data'
+          },
+          columns: [
+            { data: null, defaultContent: '' },
+            { data: 'id' },
+            { data: 'username' },
+            { data: 'nombreCompleto' },
+            { data: 'celular' },
+            { data: 'email' },
+            { data: null, orderable: false, render: () => '••••••' },
+            { data: 'dni' },
+            { data: 'direccion' },
+            { data: 'rol', render: r => `<span class="badge ${
+                r==='Administrador'?'bg-primary':
+                r==='Vendedor'     ?'bg-success':'bg-secondary'
+              }">${r}</span>` },
+            { data: null, orderable: false, render: (_,__,row) => `
+                <button class="btn btn-sm btn-primary btn-edit" data-id="${row.id}">
+                  <i class="bi bi-pencil-square"></i>
+                </button>
+                <button class="btn btn-sm btn-danger btn-delete" data-id="${row.id}">
+                  <i class="bi bi-trash"></i>
+                </button>
+                <button class="btn btn-sm btn-success btn-view-pwd" data-id="${row.id}">
+                  <i class="bi bi-eye"></i>
+                </button>` }
+          ],
+          initComplete(){
+            this.buttons().container().appendTo($('.card-header'));
+            $('#tabla-usuarios_filter')
+              .appendTo('#table-filter')
+              .find('input')
+              .addClass('form-control form-control-sm ms-2');
+          },
+          language: {
+            lengthMenu: 'Mostrar _MENU_ registros por página',
+            zeroRecords: 'No se encontraron resultados',
+            info: 'Mostrando de _START_ a _END_ de _TOTAL_ usuarios',
+            infoEmpty: 'Mostrando 0 de 0 registros',
+            infoFiltered: '(filtrado de _MAX_ totales)',
+            search: 'Buscar:',
+            paginate: {
+              first: 'Primero', last: 'Último',
+              next: 'Siguiente', previous: 'Anterior'
+            },
+            buttons: { copy: 'Copiar', print: 'Imprimir', colvis: 'Columnas' }
+          }
+        });
+
+        // ---------- Botones de acción ----------
+        $('#tabla-usuarios tbody')
+          // EDITAR → abre modal
+          .on('click','.btn-edit', function(){
+            const id = $(this).data('id');
+            cargarUsuarioEnModal(id);
+          })
+          // DELETE
+          .on('click','.btn-delete', function(){
+            const id = $(this).data('id');
+            if(!confirm('¿Eliminar este usuario?')) return;
+            fetch(`/users/${id}`,{ method:'DELETE' })
+              .then(r => r.ok
+                ? (mostrarAlerta('Usuario eliminado'), table.ajax.reload())
+                : mostrarAlerta('Error al eliminar','danger')
+              );
+          })
+          // VER/CAMBIAR PWD
+          .on('click','.btn-view-pwd', function(){
+            fetch(`/users/${$(this).data('id')}`)
+              .then(r=>r.json())
+              .then(u=>{
+                $('#pwd-id').val(u.id);
+                $('#pwd-nombre').val(u.nombreCompleto);
+                $('#pwd-current').val(u.password);
+                $('#pwd-new,#pwd-confirm').val('');
+                new bootstrap.Modal($('#modalChangePwd')).show();
+              })
+              .catch(()=> mostrarAlerta('Error al cargar usuario','danger'));
+          });
+
+        // Cambiar contraseña
+        $('#form-change-pwd').on('submit', function(e){
+          e.preventDefault();
+          const id = $('#pwd-id').val();
+          const np = $('#pwd-new').val(), cp = $('#pwd-confirm').val();
+          if(!np||!cp) return mostrarAlerta('Complete ambos campos','danger');
+          if(np!==cp) return mostrarAlerta('Contraseñas no coinciden','danger');
+          fetch(`/users/${id}/password`, {
+            method:'PATCH',
+            headers:{'Content-Type':'application/json'},
+            body:JSON.stringify({password:np})
+          })
+          .then(r => r.ok
+            ? (mostrarAlerta('Contraseña actualizada'), table.ajax.reload(), $('.modal').modal('hide'))
+            : r.json().then(e=> mostrarAlerta(e.error||'Error','danger'))
+          )
+          .catch(()=> mostrarAlerta('Error de servidor','danger'));
+        });
+
+        // ---------- Agregar usuario ----------
+        const modalAdd = new bootstrap.Modal($('#modalAddUser'));
+        $('#modalAddUser').on('show.bs.modal', ()=> {
+          fetch('/api/roles').then(r=>r.json()).then(roles=>{
+            const sel = $('#rol').empty().append('<option value="">Seleccione un rol</option>');
+            roles.forEach(r=> sel.append(`<option value="${r.id}">${r.rol}</option>`));
+          }).catch(()=> mostrarAlerta('No se pudieron cargar roles','danger'));
+        });
+
+        $('#form-add-user').on('submit', function(e){
+          e.preventDefault();
+          const payload = {
+            username:       $('#add-username').val().trim(),
+            nombreCompleto: $('#add-nombreCompleto').val().trim(),
+            celular:        $('#add-celular').val().trim(),
+            email:          $('#add-email').val().trim(),
+            dni:            $('#add-dni').val().trim(),
+            direccion:      $('#add-direccion').val().trim(),
+            password:       $('#add-password').val(),
+            idPerfil:       Number($('#rol').val())
+          };
+          if(payload.password !== $('#add-password2').val()) {
+            return mostrarAlerta('Contraseñas no coinciden','danger');
+          }
+          fetch('/users/create', {
+            method:'POST',
+            headers:{'Content-Type':'application/json'},
+            body:JSON.stringify(payload)
+          })
+          .then(r => {
+            if (r.ok) {
+              mostrarAlerta('Usuario agregado');
+              table.ajax.reload(null, true);
+              modalAdd.hide();
+            } else {
+              return r.json().then(e => mostrarAlerta(e.error||'Error','danger'));
+            }
+          })
+          .catch(()=> mostrarAlerta('Error de conexión','danger'));
+        });
+
+        // ---------- Editar usuario (MODAL AZUL) ----------
+        const modalEditEl = document.getElementById('modalEditUser');
+        const modalEdit   = new bootstrap.Modal(modalEditEl);
+        const $formEdit   = $('#form-edit-user');
+
+        async function cargarRolesEdit() {
+          const $sel = $('#edit-rol');
+          if ($sel.children().length > 1) return; // ya cargados
+          try {
+            const res = await fetch('/api/roles');
+            const roles = await res.json();
+            $sel.empty().append('<option value="">Seleccione un rol</option>');
+            roles.forEach(r => $sel.append(`<option value="${r.id}">${r.rol}</option>`));
+          } catch {
+            mostrarAlerta('No se pudieron cargar los roles', 'danger');
+          }
+        }
+
+        async function cargarUsuarioEnModal(id) {
+          try {
+            const res = await fetch(`/users/${id}`);
+            if (!res.ok) throw new Error('Usuario no encontrado');
+            const u = await res.json();
+
+            $('#edit-id').val(u.id);
+            $('#edit-username').val(u.username);
+            $('#edit-nombreCompleto').val(u.nombreCompleto);
+            $('#edit-celular').val(u.celular);
+            $('#edit-email').val(u.email);
+            $('#edit-dni').val(u.dni);
+            $('#edit-direccion').val(u.direccion);
+
+            await cargarRolesEdit();
+            $('#edit-rol').val(String(u.idPerfil) || '');
+
+            modalEdit.show();
+          } catch (err) {
+            console.error(err);
+            mostrarAlerta(err.message || 'Error al cargar usuario', 'danger');
+          }
+        }
+
+        $formEdit.on('submit', async function(e){
+          e.preventDefault();
+
+          const id = $('#edit-id').val();
+          const payload = {
+            username:       $('#edit-username').val().trim(),
+            nombreCompleto: $('#edit-nombreCompleto').val().trim(),
+            celular:        $('#edit-celular').val().trim(),
+            email:          $('#edit-email').val().trim(),
+            dni:            $('#edit-dni').val().trim(),
+            direccion:      $('#edit-direccion').val().trim(),
+            idPerfil:       Number($('#edit-rol').val())
+          };
+
+          try {
+            const res = await fetch(`/users/${id}`, {
+              method: 'PUT',
+              headers: {'Content-Type': 'application/json'},
+              body: JSON.stringify(payload)
+            });
+            if (!res.ok) {
+              const err = await res.json().catch(()=> ({}));
+              throw new Error(err.error || 'Error al actualizar');
+            }
+            mostrarAlerta('Usuario actualizado correctamente', 'success');
+            modalEdit.hide();
+            table.ajax.reload(null, false); // recarga manteniendo página
+          } catch (err) {
+            console.error(err);
+            mostrarAlerta(err.message, 'danger');
+          }
+        });
+
+        // ---------- Sesión & Logout ----------
+        (function(){
+          const raw = localStorage.getItem('session');
+          if(!raw) return location.href='login.html';
+          let s;
+          try{ s = JSON.parse(raw); }
+          catch{ localStorage.removeItem('session'); return location.href='login.html'; }
+          if(!s.loggedIn) return location.href='login.html';
+          $('#navbar-username').text(s.user.username);
+          $('.user-image, .user-header img').attr('src', s.user.avatarUrl||'/assets/img/alexanderpierce.jpg');
+          $('#user-fullname').text(s.user.nombreCompleto);
+          $('#user-email').text(s.user.email);
+          $('#user-address').text(s.user.direccion);
+          $('#btn-logout').on('click', e=>{
+            e.preventDefault();
+            localStorage.removeItem('session');
+            location.href = 'login.html';
+          });
+        })();
+      });
+    </script>
+    <script src="js/guard-accesos.js"></script>
+
+  </body>
+</html>
+

@@ -1,0 +1,274 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>Login - Farmacia Sistema</title>
+  
+
+  <!-- Bootstrap Icons -->
+  <link
+    rel="stylesheet"
+    href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css"
+  />
+  <!-- Overlayscrollbars -->
+  <link
+    rel="stylesheet"
+    href="https://cdn.jsdelivr.net/npm/overlayscrollbars@2.11.0/styles/overlayscrollbars.min.css"
+  />
+  <!-- Bootstrap CSS -->
+  <link
+    href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css"
+    rel="stylesheet"
+  />
+  <!-- AdminLTE CSS -->
+  <link rel="stylesheet" href="css/adminlte.css"/>
+
+
+  <!-- Favicon (Login) -->
+<link rel="icon" type="image/svg+xml" href="/favicons/login.svg?v=1">
+<link rel="shortcut icon" href="/favicons/login.svg?v=1">
+<meta name="theme-color" content="#198754">
+
+</head>
+<body class="hold-transition login-page bg-body-tertiary">
+  <div class="login-box">
+    <!-- Logo -->
+    <div class="login-logo">
+      <a href="#"><b>Farmacia</b>Sistema</a>
+    </div>
+    <!-- Card -->
+    <div class="card">
+      <div class="card-body login-card-body">
+        <p class="login-box-msg">Inicia sesión para continuar</p>
+
+        <form id="login-form">
+          <!-- Usuario -->
+          <div class="input-group mb-3">
+            <input
+              id="login-username"
+              type="text"
+              class="form-control"
+              placeholder="Usuario"
+              required
+            />
+            <span class="input-group-text">
+              <i class="bi bi-person"></i>
+            </span>
+          </div>
+          <!-- Contraseña -->
+          <div class="input-group mb-3">
+            <input
+              id="login-password"
+              type="password"
+              class="form-control"
+              placeholder="Contraseña"
+              required
+            />
+            <span class="input-group-text">
+              <i class="bi bi-lock"></i>
+            </span>
+          </div>
+
+          <div class="row">
+            <div class="col-8">
+              <div class="form-check">
+                <input
+                  type="checkbox"
+                  class="form-check-input"
+                  id="remember"
+                />
+                <label class="form-check-label" for="remember">
+                  Recordarme
+                </label>
+              </div>
+            </div>
+            <div class="col-4">
+              <button
+                type="submit"
+                class="btn btn-primary btn-block"
+              >
+                Entrar
+              </button>
+            </div>
+          </div>
+        </form>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- Contenedor de Toasts -->
+  <div
+    aria-live="polite"
+    aria-atomic="true"
+    class="position-fixed top-0 end-0 p-3"
+    style="z-index:1080;"
+  >
+    <!-- Toast de error -->
+    <div
+      id="toast-error"
+      class="toast align-items-center text-white bg-danger border-0"
+      role="alert"
+      aria-live="assertive"
+      aria-atomic="true"
+    >
+      <div class="d-flex">
+        <div class="toast-body"></div>
+        <button
+          type="button"
+          class="btn-close btn-close-white me-2 m-auto"
+          data-bs-dismiss="toast"
+          aria-label="Cerrar"
+        ></button>
+      </div>
+    </div>
+    <!-- Toast de éxito -->
+    <div
+      id="toast-success"
+      class="toast align-items-center text-white bg-success border-0"
+      role="alert"
+      aria-live="polite"
+      aria-atomic="true"
+    >
+      <div class="d-flex">
+        <div class="toast-body"></div>
+        <button
+          type="button"
+          class="btn-close btn-close-white me-2 m-auto"
+          data-bs-dismiss="toast"
+          aria-label="Cerrar"
+        ></button>
+      </div>
+    </div>
+  </div>
+
+ <!-- Scripts -->
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js"></script>
+<script src="js/adminlte.js"></script>
+
+<script>
+/* ==========================================================
+   LOGIN: intercepta el submit, llama a /login, 
+   guarda sesión y redirige según el perfil del usuario
+   ========================================================== */
+document.getElementById('login-form').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  console.log('Submit interceptado');
+
+  // 1) Tomamos credenciales del formulario
+  const username = document.getElementById('login-username').value.trim();
+  const password = document.getElementById('login-password').value;
+
+  try {
+    // 2) Llamamos a la API de login
+    const resp = await fetch('/login', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ username, password })
+    });
+
+    /* ──────────────────────────────────────────────────────
+       CASO ÉXITO (200 OK)
+       ────────────────────────────────────────────────────── */
+    if (resp.ok) {
+      console.log('✅ resp.ok → éxito');
+
+      // La API debe devolver { message, user }
+      const { message, user } = await resp.json();
+
+      // 2.1) Mostramos toast de éxito
+      const ts = document.getElementById('toast-success');
+      ts.querySelector('.toast-body').textContent = message;
+      new bootstrap.Toast(ts, { delay: 3000 }).show();
+
+      // 2.2) Normalizamos el campo de perfil por si viene con otro nombre
+      //     (idPerfil preferido; si no, usa perfilId / id_perfil / idperfil)
+      const idPerfilNormalizado =
+        user.idPerfil ?? user.perfilId ?? user.id_perfil ?? user.idperfil ?? null;
+
+      // 2.3) Guardamos la sesión completa en localStorage
+      const session = {
+        loggedIn: true,
+        user: {
+          id:             user.id,
+          username:       user.username,
+          nombreCompleto: user.nombreCompleto,
+          celular:        user.celular,
+          email:          user.email,
+          dni:            user.dni,
+          direccion:      user.direccion,
+
+          // IMPORTANTE: guardamos el idPerfil normalizado
+          idPerfil:       idPerfilNormalizado,
+
+          rol:            user.rol,
+
+          // Array de accesos [{modulo, icono, acceso}] si tu backend lo envía
+          accesos:        user.accesos || []
+        }
+      };
+      localStorage.setItem('session', JSON.stringify(session));
+
+      // 2.4) Redirección por perfil
+      //      - Admin (1)    → index.html (dashboard)
+      //      - Vendedor (2) → clientes.html  (lo que pediste)
+      //      - Otros (3)    → productos.html (ajusta si deseas)
+      const homeByPerfil = {
+        1: 'index.html',
+        2: 'clientes.html',
+        3: 'productos.html'
+      };
+
+      // Elegimos destino según el id de perfil; si no existe, usa index.html
+      const destino = homeByPerfil[idPerfilNormalizado] || 'index.html';
+      console.log('🔄 Redirigiendo según perfil →', destino);
+
+      // 2.5) Redirigimos (se mantiene tu semántica con setTimeout)
+      setTimeout(() => {
+        window.location.href = destino;
+      }, 500);
+
+      return; // fin de éxito
+    }
+
+    /* ──────────────────────────────────────────────────────
+       CASO CREDENCIALES INVÁLIDAS (401)
+       ────────────────────────────────────────────────────── */
+    if (resp.status === 401) {
+      console.log('❌ resp.status 401');
+      const te = document.getElementById('toast-error');
+      te.querySelector('.toast-body').textContent = 'Usuario o contraseña no válidos';
+      new bootstrap.Toast(te, { delay: 3000 }).show();
+      return;
+    }
+
+    /* ──────────────────────────────────────────────────────
+       OTROS ERRORES (>=400 y !=401)
+       ────────────────────────────────────────────────────── */
+    console.log('⚠️ resp.ok false distinto de 401');
+    let errMsg = 'Error inesperado';
+    try {
+      const err = await resp.json();
+      errMsg = err.error || errMsg;
+    } catch {}
+    const te = document.getElementById('toast-error');
+    te.querySelector('.toast-body').textContent = errMsg;
+    new bootstrap.Toast(te, { delay: 3000 }).show();
+
+  } catch (err) {
+    /* ──────────────────────────────────────────────────────
+       ERROR DE RED / CONEXIÓN
+       ────────────────────────────────────────────────────── */
+    console.error(err);
+    const te = document.getElementById('toast-error');
+    te.querySelector('.toast-body').textContent = 'No se pudo conectar al servidor';
+    new bootstrap.Toast(te, { delay: 3000 }).show();
+  }
+});
+</script>
+<script src="js/guard-accesos.js"></script>
+
+</body>
+</html>
