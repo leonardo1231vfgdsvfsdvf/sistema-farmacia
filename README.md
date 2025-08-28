@@ -22,10 +22,18 @@ Permite administrar usuarios, productos, clientes y ventas de manera eficiente.
 - **Control de versiones**: Git & GitHub.
 
 ---
+## 🗄️ Base de datos
 
-## 📂 Estructura del proyecto
+El sistema utiliza **MySQL** como motor de base de datos.  
+El script con la estructura y datos iniciales se encuentra en el archivo **`farmacia.sql`**.
 
----
+### 🔹 Importar la base de datos
+
+1. Abre **phpMyAdmin** o la terminal de MySQL.  
+2. Crea la base de datos:
+   ```sql
+   CREATE DATABASE farmacia;
+
 
 ## 👨‍💻 Autor
 
