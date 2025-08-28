@@ -24,3 +24,11 @@ Permite administrar usuarios, productos, clientes y ventas de manera eficiente.
 ---
 
 ## 📂 Estructura del proyecto
+
+---
+
+## 👨‍💻 Autor
+
+**José Leonardo Rosales Gutiérrez**  
+_Junior Programmer_  
+🌐 [GitHub](https://github.com/leonardo1231vfgdsvfsdvf)
