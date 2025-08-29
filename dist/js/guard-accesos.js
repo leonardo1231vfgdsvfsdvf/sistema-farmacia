@@ -54,7 +54,7 @@
   };
 
   if (page === 'login.html') {
-    location.replace(defaultAllowedPage());
+    location.replace('index.html');
     return;
   }
 
