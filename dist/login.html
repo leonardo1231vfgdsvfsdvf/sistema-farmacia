@@ -4,7 +4,28 @@
   <meta charset="utf-8"/>
   <meta name="viewport" content="width=device-width,initial-scale=1"/>
   <title>Login - Farmacia Sistema</title>
-  
+  <!-- Anti-flash: si ya hay sesión, manda a index antes de pintar -->
+<style>html{visibility:hidden}</style>
+<script>
+  (function () {
+    let logged = false;
+    try {
+      const raw = localStorage.getItem('session');
+      const s = raw ? JSON.parse(raw) : null;
+      logged = Boolean(s && s.loggedIn);
+    } catch(e) { logged = false; }
+
+    if (logged) {
+      // No deja rastro en el historial y evita parpadeo
+      location.replace('index.html');
+    } else {
+      // No hay sesión: muestra el login normalmente
+      document.documentElement.style.visibility = 'visible';
+    }
+  })();
+</script>
+<noscript><meta http-equiv="refresh" content="0; url=index.html"></noscript>
+
 
   <!-- Bootstrap Icons -->
   <link
